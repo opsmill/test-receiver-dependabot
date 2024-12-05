@@ -23,6 +23,8 @@ updates:
       all:
         patterns:
           - "*"
+    registries:
+      - github
 
   - package-ecosystem: "pip"
     directory: "/"
@@ -37,3 +39,5 @@ updates:
       all:
         patterns:
           - "*"
+    registries:
+      - github
