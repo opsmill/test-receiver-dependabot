@@ -11,33 +11,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          submodules: true # Ensures submodules are included in the checkout
-
-      - name: Update submodules to latest release
-        run: |
-          set -e
-          git submodule foreach 'bash -c "
-            url=\$(git remote get-url origin | sed 's#^git@github\\.com:#https://github.com/#;s#\\.git\$##')/releases/latest
-            latest_tag=\$(curl -sIL -o /dev/null -w '%{url_effective}' \$url | awk -F/ '{print \$NF}')
-            current_tag=\$(git describe --tags || echo '')
-            if [ \"\$current_tag\" != \"\$latest_tag\" ]; then
-              echo \"Updating submodule \$name from \$current_tag to \$latest_tag\"
-              git fetch --tags
-              git checkout \"\$latest_tag\"
-              cd ..
-              git add \$name
-            fi
-          "'
-
-          # Commit changes if any submodule updates occurred
-          if git diff-index --quiet HEAD --; then
-            echo "No submodules needed updating"
-          else
-            git commit -S -m "Update submodules to latest release (automated)"
-            git push
-          fi
-
 
       # Run Dependabot update
       - name: Run Dependabot Update
