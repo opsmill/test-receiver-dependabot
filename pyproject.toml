@@ -5,9 +5,12 @@ description = ""
 authors = ["OpsMill <info@opsmill.com>"]
 package-mode = false
 
+packages = [
+    { include = "infrahub_sdk", from = "python_sdk" }
+]
+
 [tool.poetry.dependencies]
 python = "^3.10, < 3.13"
-infrahub-sdk = {version = "^1.0.0", extras = ["all"]}
 invoke = "^2.1.2"
 # nornir-infrahub = "^0, >=0.2.2"
 ansible-core = [
