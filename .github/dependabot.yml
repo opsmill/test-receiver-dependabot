@@ -31,6 +31,3 @@ updates:
       all:
         patterns:
           - "*"
-
-    labels:
-      - "changes/patch"
