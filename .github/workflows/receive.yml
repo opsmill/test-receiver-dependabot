@@ -16,3 +16,43 @@ jobs:
       # Run Dependabot update
       - name: Run Dependabot Update
         uses: dependabot/fetch-metadata@v2
+
+  update-submodules:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        fetch-depth: 0
+    # - name: Import GPG key
+    #   uses: crazy-max/ghaction-import-gpg@v6
+    #   with:
+    #     gpg_private_key: ${{secrets.GPG_PRIVATE_KEY}}
+    #     passphrase: ${{secrets.GPG_PASS}}
+    #     git_user_signingkey: true
+    - name: Update submodules
+      run: |
+        if git commit -S -am"Update submodules (automated)
+
+        $(git submodule -q foreach '
+
+          # alternate method 1: latest release
+          tag="$(gh api repos/opsmill/infrahub-sdk-python/releases/latest -q .tag_name)"
+
+          # alternate method 2: newest tag by date:
+          # tag="$(git tag --sort=-creatordate | head -n1)"
+
+          regex="[vV]?[0-9.]+" # only tags that match this
+
+          cur="$(git describe --tags)"
+          if echo "$tag" | grep -qEx "$regex" && [ "$cur" != "$tag" ] &&
+            printf "%s\n%s" "$cur" "$tag" | sort -VC
+          then
+            git switch -dq -- "$tag"
+            printf "%s\n" "$name: $cur -> $tag"
+          fi'
+        )"; then
+          git show --raw
+          git push
+        fi
