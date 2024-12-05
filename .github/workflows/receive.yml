@@ -51,10 +51,8 @@ jobs:
           rebase: false
 
       - name: Create a pull request
-        env:
-          GITHUB_TOKEN: ${{ secrets.OTTO_TOKEN }}
         run: |
-          gh auth login
+          echo ${{ secrets.OTTO_TOKEN }} | gh auth login --with-token
           gh pr create \
             --title "Update ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}" \
             --body "This PR updates the submodule ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}." \
