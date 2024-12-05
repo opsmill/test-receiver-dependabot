@@ -11,8 +11,30 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      # Run Dependabot update
-      - name: Run Dependabot Update
-        uses: dependabot/fetch-metadata@v2
+      # # Run Dependabot update
+      # - name: Run Dependabot Update
+      #   uses: dependabot/fetch-metadata@v2
 
+      - name: Access version information
+        run: |
+          echo "Triggered by version: ${{ github.event.client_payload.version }}"
+          VERSION="${{ github.event.client_payload.version }}"
+
+      - name: Use the version from client payload to update submodule
+        run: |
+          SUBMODULE_PATH="infrahub-sdk-python"
+          RELEASE_VERSION="${{ github.event.client_payload.version }}"
+          echo "Updating submodule to version: $RELEASE_VERSION"
+          cd $SUBMODULE_PATH
+          git fetch --tags
+          git checkout $RELEASE_VERSION
+          cd -
+
+      - name: Commit updated submodule
+        run: |
+          git add infrahub-sdk-python
+          git commit -m "Update submodule to version ${{ github.event.client_payload.version }}"
+          git push
