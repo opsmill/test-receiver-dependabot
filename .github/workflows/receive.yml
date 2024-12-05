@@ -39,6 +39,10 @@ jobs:
           git checkout ${{ env.RELEASE_VERSION }}
           cd -
 
+      # - name: Explicitly push branch
+      #   run: |
+      #     git push origin ${{ env.BRANCH_NAME }}
+
       - name: Commit and push changes with github-actions-x/commit
         uses: github-actions-x/commit@v2.9
         with:
@@ -48,7 +52,7 @@ jobs:
           files: infrahub-sdk-python/
           name: opsmill-bot
           email: github-bot@opsmill.com
-          rebase: true
+          rebase: false
 
       - name: Create a pull request
         env:
