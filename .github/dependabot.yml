@@ -1,6 +1,12 @@
 ---
 # yamllint disable rule:truthy
 version: 2
+registries:
+  github:
+    type: git
+    url: https://github.com
+    username: x-access-token # username doesn't matter
+    password: ${{ secrets.OTTO_TOKEN }} # dependabot secret
 
 updates:
   # Maintain dependencies for GitHub Actions
