@@ -46,8 +46,8 @@ jobs:
           BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
 
           # Commit the changes
-          git user.name opsmill-bot
-          git user.email github-bot@opsmill.com
+          git config user.name opsmill-bot
+          git config user.email github-bot@opsmill.com
           git add $SUBMODULE_PATH
           git commit -m "Update submodule $SUBMODULE_PATH to version $RELEASE_VERSION"
 
