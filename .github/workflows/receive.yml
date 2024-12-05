@@ -39,7 +39,7 @@ jobs:
 
       - name: Commit changes and create branch with gh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OTTO_TOKEN: ${{ secrets.OTTO_TOKEN }}
         run: |
           SUBMODULE_PATH="infrahub-sdk-python"
           RELEASE_VERSION="${{ github.event.client_payload.version }}"
@@ -57,7 +57,7 @@ jobs:
 
       - name: Open a pull request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OTTO_TOKEN: ${{ secrets.OTTO_TOKEN }}
         run: |
           SUBMODULE_PATH="infrahub-sdk-python"
           RELEASE_VERSION="${{ github.event.client_payload.version }}"
