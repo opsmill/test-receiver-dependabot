@@ -1,9 +1,9 @@
-name: Handle Dependabot Trigger
+name: Handle Submodule Trigger
 
 on:
   repository_dispatch:
     types:
-      - force-dependabot-update
+      - force-submodule-update
 
 jobs:
   update-dependencies:

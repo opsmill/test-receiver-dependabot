@@ -32,14 +32,14 @@ updates:
         patterns:
           - "*"
 
-  # - package-ecosystem: "gitsubmodule"
-  #   directory: "/"
-  #   allow:
-  #     - dependency-name: "infrahub-sdk-python"
-  #   schedule:
-  #     interval: "weekly"
-  #     day: "monday"
-  #     time: "09:00"
-  #   target-branch: main
-  #   labels:
-  #     - "changes/patch"
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    allow:
+      - dependency-name: "infrahub-sdk-python"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    target-branch: main
+    labels:
+      - "changes/patch"
