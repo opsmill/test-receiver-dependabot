@@ -56,7 +56,7 @@ jobs:
         run: |
           gh auth login
           gh pr create \
-            --title "Update $SUBMODULE_PATH to version $RELEASE_VERSION" \
-            --body "This PR updates the submodule $SUBMODULE_PATH to version $RELEASE_VERSION." \
+            --title "Update ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}" \
+            --body "This PR updates the submodule ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}." \
             --base main \
             --head ${{ env.BRANCH_NAME }}
