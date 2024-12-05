@@ -19,34 +19,34 @@ jobs:
   update-submodules:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        submodules: true
-        fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
 
-    - name: Update submodules
-      run: |
-        if git commit -S -am "Update submodules (automated)
+      - name: Update submodules
+        run: |
+          if git commit -S -am "Update submodules (automated)
 
-        $(git submodule -q foreach '
+          $(git submodule -q foreach '
 
-          # alternate method 1: latest release
-          tag="$(gh api repos/opsmill/infrahub-sdk-python/releases/latest -q .tag_name)"
+            # alternate method 1: latest release
+            tag="$(gh api repos/opsmill/infrahub-sdk-python/releases/latest -q .tag_name)"
 
-          # alternate method 2: newest tag by date:
-          # tag="$(git tag --sort=-creatordate | head -n1)"
+            # alternate method 2: newest tag by date:
+            # tag="$(git tag --sort=-creatordate | head -n1)"
 
-          regex="[vV]?[0-9.]+" # only tags that match this
+            regex="[vV]?[0-9.]+" # only tags that match this
 
-          cur="$(git describe --tags)"
-          if echo "$tag" | grep -qEx "$regex" && [ "$cur" != "$tag" ] &&
-            printf "%s\n%s" "$cur" "$tag" | sort -VC
-          then
-            git switch -dq -- "$tag"
-            printf "%s\n" "$name: $cur -> $tag"
-          fi'
-        )"; then
-          git show --raw
-          git push
-        fi
+            cur="$(git describe --tags)"
+            if echo "$tag" | grep -qEx "$regex" && [ "$cur" != "$tag" ] &&
+              printf "%s\n%s" "$cur" "$tag" | sort -VC
+            then
+              git switch -dq -- "$tag"
+              printf "%s\n" "$name: $cur -> $tag"
+            fi'
+          )"; then
+            git show --raw
+            git push
+          fi
