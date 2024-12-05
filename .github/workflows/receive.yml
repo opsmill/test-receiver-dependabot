@@ -29,7 +29,7 @@ jobs:
         run: |
           SUBMODULE_PATH="infrahub-sdk-python"
           RELEASE_VERSION="${{ github.event.client_payload.version }}"
-          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
+          BRANCH_NAME="${{ matrix.branch-name}}-${SUBMODULE_PATH}-${RELEASE_VERSION}"
           echo "SUBMODULE_PATH=$SUBMODULE_PATH" >> $GITHUB_ENV
           echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
@@ -60,7 +60,7 @@ jobs:
         run: |
           echo ${{ secrets.OTTO_TOKEN }} | gh auth login --with-token
           gh pr create \
-            --title "Update ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}" \
+            --title "Update ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }} against ${{ matrix.branch-name}}" \
             --body "This PR updates the submodule ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}." \
-            --base main \
+            --base ${{ matrix.branch-name}} \
             --head ${{ env.BRANCH_NAME }}
