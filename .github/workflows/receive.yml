@@ -18,56 +18,44 @@ jobs:
       # - name: Run Dependabot Update
       #   uses: dependabot/fetch-metadata@v2
 
-      - name: Access version information
+      - name: Set branch name
+        id: set-branch-name
         run: |
-          echo "Triggered by version: ${{ github.event.client_payload.version }}"
-          VERSION="${{ github.event.client_payload.version }}"
+          SUBMODULE_PATH="infrahub-sdk-python"
+          RELEASE_VERSION="${{ github.event.client_payload.version }}"
+          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
+          echo "SUBMODULE_PATH=$SUBMODULE_PATH" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=$RELEASE_VERSION" >> $GITHUB_ENV
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
 
       - name: Use the version from client payload to update submodule
         run: |
-          SUBMODULE_PATH="infrahub-sdk-python"
-          RELEASE_VERSION="${{ github.event.client_payload.version }}"
-          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
-          echo "Updating submodule to version: $RELEASE_VERSION"
-          echo "Branch name: $BRANCH_NAME"
+          echo "Updating submodule to version: ${{ env.RELEASE_VERSION }}"
+          echo "Branch name: ${{ env.BRANCH_NAME }}"
 
           # Navigate to the submodule and update it to the specified version
-          cd $SUBMODULE_PATH
+          cd infrahub-sdk-python
           git fetch --tags
-          git checkout $RELEASE_VERSION
+          git checkout ${{ env.RELEASE_VERSION }}
           cd -
 
-      - name: Commit changes and create branch with gh
+      - name: Commit and push changes with github-actions-x/commit
+        uses: github-actions-x/commit@v2.9
+        with:
+          github-token: ${{ secrets.GH_INFRAHUB_BOT_TOKEN }}
+          push-branch: ${{ env.BRANCH_NAME }}
+          commit-message: "chore: update submodule ${{ env.SUBMODULE_PATH }} to version ${{ env.RELEASE_VERSION }}"
+          files: infrahub-sdk-python/
+          name: opsmill-bot
+          email: github-bot@opsmill.com
+          rebase: true
+
+      - name: Create a pull request
         env:
-          OTTO_TOKEN: ${{ secrets.OTTO_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_INFRAHUB_BOT_TOKEN }}
         run: |
-          SUBMODULE_PATH="infrahub-sdk-python"
-          RELEASE_VERSION="${{ github.event.client_payload.version }}"
-          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
-
-          # Commit the changes
-          git config user.name opsmill-bot
-          git config user.email github-bot@opsmill.com
-          git add $SUBMODULE_PATH
-          git commit -m "Update submodule $SUBMODULE_PATH to version $RELEASE_VERSION"
-
-          # Create a new branch and push using gh
-          gh auth setup-git
-          gh repo set-default ${{ github.repository }}
-          git checkout -b $BRANCH_NAME
-          git push --set-upstream origin $BRANCH_NAME
-
-      - name: Open a pull request
-        env:
-          OTTO_TOKEN: ${{ secrets.OTTO_TOKEN }}
-        run: |
-          SUBMODULE_PATH="infrahub-sdk-python"
-          RELEASE_VERSION="${{ github.event.client_payload.version }}"
-          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
-
-          # Create a pull request using gh
           gh pr create \
             --title "Update $SUBMODULE_PATH to version $RELEASE_VERSION" \
-            --body "This PR updates the submodule $SUBMODULE_PATH to the version $RELEASE_VERSION." \
+            --body "This PR updates the submodule $SUBMODULE_PATH to version $RELEASE_VERSION." \
             --base main \
-            --head $BRANCH_NAME
+            --head ${{ env.BRANCH_NAME }}
