@@ -27,14 +27,45 @@ jobs:
         run: |
           SUBMODULE_PATH="infrahub-sdk-python"
           RELEASE_VERSION="${{ github.event.client_payload.version }}"
+          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
           echo "Updating submodule to version: $RELEASE_VERSION"
+          echo "Branch name: $BRANCH_NAME"
+
+          # Navigate to the submodule and update it to the specified version
           cd $SUBMODULE_PATH
           git fetch --tags
           git checkout $RELEASE_VERSION
           cd -
 
-      - name: Commit updated submodule
+      - name: Commit changes and create branch with gh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add infrahub-sdk-python
-          git commit -m "Update submodule to version ${{ github.event.client_payload.version }}"
-          git push
+          SUBMODULE_PATH="infrahub-sdk-python"
+          RELEASE_VERSION="${{ github.event.client_payload.version }}"
+          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
+
+          # Commit the changes
+          git add $SUBMODULE_PATH
+          git commit -m "Update submodule $SUBMODULE_PATH to version $RELEASE_VERSION"
+
+          # Create a new branch and push using gh
+          gh auth setup-git
+          gh repo set-default ${{ github.repository }}
+          git checkout -b $BRANCH_NAME
+          git push --set-upstream origin $BRANCH_NAME
+
+      - name: Open a pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SUBMODULE_PATH="infrahub-sdk-python"
+          RELEASE_VERSION="${{ github.event.client_payload.version }}"
+          BRANCH_NAME="${SUBMODULE_PATH}-${RELEASE_VERSION}"
+
+          # Create a pull request using gh
+          gh pr create \
+            --title "Update $SUBMODULE_PATH to version $RELEASE_VERSION" \
+            --body "This PR updates the submodule $SUBMODULE_PATH to the version $RELEASE_VERSION." \
+            --base main \
+            --head $BRANCH_NAME
