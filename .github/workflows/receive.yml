@@ -7,11 +7,17 @@ on:
 
 jobs:
   update-dependencies:
+    strategy:
+      matrix:
+        branch-name:
+          - main
+          - develop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: "${{ matrix.branch-name }}"
           submodules: recursive
 
       # # Run Dependabot update
