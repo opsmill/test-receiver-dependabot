@@ -16,15 +16,6 @@ jobs:
       - name: Run Dependabot Update
         uses: dependabot/fetch-metadata@v2
 
-  update-submodules:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          submodules: true
-          fetch-depth: 0
-
       - name: Update submodules
         run: |
           if git commit -S -am "Update submodules (automated)
