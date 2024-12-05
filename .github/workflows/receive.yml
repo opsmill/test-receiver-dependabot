@@ -9,8 +9,7 @@ jobs:
   update-dependencies:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       # Run Dependabot update
@@ -25,15 +24,10 @@ jobs:
       with:
         submodules: true
         fetch-depth: 0
-    # - name: Import GPG key
-    #   uses: crazy-max/ghaction-import-gpg@v6
-    #   with:
-    #     gpg_private_key: ${{secrets.GPG_PRIVATE_KEY}}
-    #     passphrase: ${{secrets.GPG_PASS}}
-    #     git_user_signingkey: true
+
     - name: Update submodules
       run: |
-        if git commit -S -am"Update submodules (automated)
+        if git commit -S -am "Update submodules (automated)
 
         $(git submodule -q foreach '
 
