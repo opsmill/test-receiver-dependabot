@@ -31,17 +31,6 @@ updates:
       all:
         patterns:
           - "^(?!infrahub-sdk$).*"  # Regex to exclude infrahub-sdk
-
-  # Separate group for infrahub-sdk
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "12:00"
-    target-branch: main
-    labels:
-      - "changes/patch"
-    groups:
       infrahub-sdk:
         patterns:
           - "infrahub-sdk"
