@@ -1,12 +1,6 @@
 ---
 # yamllint disable rule:truthy
 version: 2
-registries:
-  github:
-    type: git
-    url: https://github.com
-    username: x-access-token # username doesn't matter
-    password: ${{ secrets.DEPENDABOT_TOKEN }} # dependabot secret
 
 updates:
   # Maintain dependencies for GitHub Actions
@@ -23,21 +17,31 @@ updates:
       all:
         patterns:
           - "*"
-    registries:
-      - github
 
+  # Group all pip updates except infrahub-sdk
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      time: "12:00"
     target-branch: main
     labels:
       - "changes/patch"
     groups:
       all:
         patterns:
-          - "*"
-    registries:
-      - github
+          - "^(?!infrahub-sdk$).*"  # Regex to exclude infrahub-sdk
+
+  # Separate group for infrahub-sdk
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "12:00"
+    target-branch: main
+    labels:
+      - "changes/patch"
+    groups:
+      infrahub-sdk:
+        patterns:
+          - "infrahub-sdk"
